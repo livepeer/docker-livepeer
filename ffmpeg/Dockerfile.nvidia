@@ -1,0 +1,27 @@
+# Docker file for building ffmpeg dependency
+FROM debian:stretch as builder
+
+ENV PKG_CONFIG_PATH /root/compiled/lib/pkgconfig
+WORKDIR /root
+
+RUN apt update \
+    && apt install -y build-essential pkg-config autoconf gnutls-dev git
+
+# install cuda 10
+COPY install_cuda_10.sh install_cuda_10.sh
+RUN ./install_cuda_10.sh
+
+# install NVENC
+COPY install_nvenc.sh install_nvenc.sh
+RUN ./install_nvenc.sh
+
+COPY install_ffmpeg_nvidia.sh install_ffmpeg_nvidia.sh
+RUN ./install_ffmpeg_nvidia.sh
+
+
+FROM debian:stretch-slim
+ENV PKG_CONFIG_PATH /root/compiled/lib/pkgconfig
+WORKDIR /root
+COPY --from=builder /root/compiled /root/compiled/
+
+# Build Docker image: docker build -t ffmpeg-base .

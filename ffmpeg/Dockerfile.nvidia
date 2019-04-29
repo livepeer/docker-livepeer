@@ -5,7 +5,7 @@ ENV PKG_CONFIG_PATH /root/compiled/lib/pkgconfig
 WORKDIR /root
 
 RUN apt update \
-    && apt install -y build-essential pkg-config autoconf gnutls-dev git
+    && apt install -y build-essential pkg-config autoconf gnutls-dev git curl
 
 # install cuda 10
 COPY install_cuda_10.sh install_cuda_10.sh

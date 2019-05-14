@@ -1,0 +1,13 @@
+# This is the one with Docker
+image: Windows Server 2019
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - docker login -u %DOCKER_USER% -p %DOCKER_PASS%
+  - cd ffmpeg
+  - docker build -m 4gb -t iameli/livepeer-ffmpeg-base -f .\Dockerfile.ffmpeg-windows .
+  - docker push iameli/livepeer-ffmpeg-base
+
+# Don't actually build.
+build: off

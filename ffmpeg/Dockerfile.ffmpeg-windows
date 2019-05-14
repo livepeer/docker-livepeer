@@ -6,7 +6,7 @@
 # docker build -m 4gb -t livepeer/ffmpeg-base:windows -f Dockerfile.ffmpeg-windows .
 # docker push livepeer/ffmpeg-base:windows
 
-FROM mcr.microsoft.com/windows/servercore:ltsc2019 as builder
+FROM mcr.microsoft.com/windows/servercore:ltsc2016 as builder
 
 
 WORKDIR c:/temp
@@ -20,7 +20,7 @@ RUN Invoke-WebRequest -UserAgent 'DockerCI' -outfile 7zsetup.exe http://www.7-zi
 RUN Start-Process .\7zsetup -ArgumentList '/S /D=c:/7zip' -Wait
 
 RUN (new-object System.Net.WebClient).DownloadFile('http://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz','C:\temp\msys2-x86_64-latest.tar.xz')
-RUN Get-FileHash -Path msys2-x86_64-latest.tar.xz 
+RUN Get-FileHash -Path msys2-x86_64-latest.tar.xz
 RUN C:\7zip\7z e msys2-x86_64-latest.tar.xz -Wait
 RUN C:\7zip\7z x msys2-x86_64-latest.tar -o"C:\\"
 

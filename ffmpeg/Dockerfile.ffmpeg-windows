@@ -47,7 +47,8 @@ RUN C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
 ADD install_ffmpeg_windows.sh c:\temp\install_ffmpeg_windows.sh
 ADD install_ffmpeg.sh c:\temp\install_ffmpeg.sh
 
-RUN  C:\msys64\usr\bin\bash.exe -l -c '/c/temp/install_ffmpeg_windows.sh '; `
+RUN C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
+  C:\msys64\usr\bin\bash.exe -l -c '/c/temp/install_ffmpeg_windows.sh '; `
   C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully complided ffmpeg lib"';
 
 RUN Remove-Item @('C:\msys64\build\x264') -Force -Recurse; `

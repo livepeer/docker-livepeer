@@ -11,7 +11,7 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2016 as builder
 
 WORKDIR c:/temp
 
-SHELL ["powershell", "-Command"]
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
 # Download and extract MSYS2 with 7zip.
 

@@ -38,9 +38,9 @@ RUN C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
   # Install our packages. Use the mingw-w64-x86_64 version of everything run-time; MSYS2 is apparently slower?
   C:\msys64\usr\bin\bash.exe -l -c 'pacman -S perl binutils git make autoconf mingw-w64-x86_64-gcc mingw-w64-x86_64-libtool mingw-w64-x86_64-gnutls mingw-w64-x86_64-go mingw-w64-x86_64-pkg-config --noconfirm --noprogressbar --ask=20'; `
   C:\msys64\usr\bin\bash.exe -l -c 'pacman -Scc --noconfirm'; `
-  C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully installed MSYS2"'; `
-  # MSYS2 leaves processes running or something - this step hangs? Hard shutdown to fix that.
-  Stop-Computer -Force
+  C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully installed MSYS2"';
+# MSYS2 leaves processes running or something - this step hangs? Hard shutdown to fix that.
+# Stop-Computer -Force
 
 # Install FFMpeg, nasm, x264
 ADD install_ffmpeg_windows.sh c:\temp\install_ffmpeg_windows.sh

@@ -13,7 +13,7 @@ if [ ! -e "$HOME/nasm/nasm" ]; then
   make install || echo "Installing docs fails but should be OK otherwise"
 fi
 
-if [ ! -e "$HOME/x264/x264" ]; then
+if [ ! -e "$HOME/x264/x264" ]; then--
   git clone http://git.videolan.org/git/x264.git "$HOME/x264"
   cd "$HOME/x264"
   # git master as of this writing
@@ -30,6 +30,7 @@ if [ ! -e "$HOME/ffmpeg/libavcodec/libavcodec.a" ]; then
     --disable-muxers --disable-demuxers --disable-parsers --disable-protocols \
     --disable-encoders --disable-decoders --disable-filters --disable-bsfs \
     --disable-postproc --disable-lzma \
+    --enable-nvenc \
     --enable-gnutls --enable-libx264 --enable-gpl \
     --enable-protocol=https,rtmp,file \
     --enable-muxer=mpegts,hls,segment --enable-demuxer=flv,mpegts \

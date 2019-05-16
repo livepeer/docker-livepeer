@@ -20,7 +20,7 @@ RUN Invoke-WebRequest -UserAgent 'DockerCI' -outfile 7zsetup.exe http://www.7-zi
 RUN Start-Process .\7zsetup -ArgumentList '/S /D=c:/7zip' -Wait
 
 RUN (new-object System.Net.WebClient).DownloadFile('http://repo.msys2.org/distrib/msys2-x86_64-latest.tar.xz','C:\temp\msys2-x86_64-latest.tar.xz')
-RUN Get-FileHash -Path msys2-x86_64-latest.tar.xz 
+RUN Get-FileHash -Path msys2-x86_64-latest.tar.xz
 RUN C:\7zip\7z e msys2-x86_64-latest.tar.xz -Wait
 RUN C:\7zip\7z x msys2-x86_64-latest.tar -o"C:\\"
 
@@ -43,11 +43,10 @@ RUN C:\msys64\usr\bin\bash.exe -l -c 'exit 0'; `
     Stop-Computer -Force
 
 # Install FFMpeg, nasm, x264
-ADD install_ffmpeg_windows.sh c:\temp\install_ffmpeg_windows.sh
 ADD install_ffmpeg.sh c:\temp\install_ffmpeg.sh
 
-RUN  C:\msys64\usr\bin\bash.exe -l -c '/c/temp/install_ffmpeg_windows.sh '; `
-     C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully complided ffmpeg lib"';
+RUN  C:\msys64\usr\bin\bash.exe -l -c '/c/temp/install_ffmpeg.sh '; `
+     C:\msys64\usr\bin\bash.exe -l -c 'echo "Successfully compiled ffmpeg lib"';
 
 RUN Remove-Item @('C:\msys64\build\x264') -Force -Recurse; `
     Remove-Item @('C:\msys64\build\nasm') -Force -Recurse; `

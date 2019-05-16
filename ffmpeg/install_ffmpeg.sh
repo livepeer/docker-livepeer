@@ -6,7 +6,7 @@ export PATH="$HOME/compiled/bin":$PATH
 export PKG_CONFIG_PATH=$HOME/compiled/lib/pkgconfig
 
 # Windows (MSYS2) needs a few tweaks
-if [[ $(uname) == *"MSYS2_NT"* ]]; then
+if [[ $(uname) == *"MSYS_NT"* ]]; then
   export PATH="$PATH:/usr/bin:/mingw64/bin"
   export C_INCLUDE_PATH="${C_INCLUDE_PATH:-}:/msys64/mingw64/lib"
   export HOME="/build"

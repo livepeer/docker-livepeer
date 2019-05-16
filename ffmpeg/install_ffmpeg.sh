@@ -30,7 +30,7 @@ if [ ! -e "$HOME/x264/x264" ]; then
   cd "$HOME/x264"
   # git master as of this writing
   git checkout 545de2ffec6ae9a80738de1b2c8cf820249a2530
-  ./configure --prefix="$HOME/compiled" --enable-pic --enable-static
+  ./configure --prefix="$HOME/compiled" --enable-pic --enable-static ${HOST_OS:-}
   make
   make install-lib-static
 fi

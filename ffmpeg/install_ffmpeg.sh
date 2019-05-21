@@ -2,9 +2,6 @@
 
 set -ex
 
-export PATH="$HOME/compiled/bin":$PATH
-export PKG_CONFIG_PATH=$HOME/compiled/lib/pkgconfig
-
 # Windows (MSYS2) needs a few tweaks
 if [[ $(uname) == *"MSYS2_NT"* ]]; then
   export PATH="$PATH:/usr/bin:/mingw64/bin"
@@ -13,11 +10,14 @@ if [[ $(uname) == *"MSYS2_NT"* ]]; then
   mkdir -p $HOME
 
   export PATH="$HOME/compiled/bin":$PATH
-  export PKG_CONFIG_PATH=$HOME/compiled/lib/pkgconfig:/mingw64/lib/pkgconfig
+  export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
 
   export TARGET_OS="--target-os=mingw64"
   export HOST_OS="--host=x86_64-w64-mingw32"
 fi
+
+export PATH="$HOME/compiled/bin":$PATH
+export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:-}:$HOME/compiled/lib/pkgconfig"
 
 # NVENC only works on Windows/Linux
 if [ $(uname) != "Darwin" ]; then

@@ -51,7 +51,22 @@ fi
 
 EXTRA_FFMPEG_FLAGS=""
 if [ $(uname) != "Darwin" ]; then
-  EXTRA_FFMPEG_FLAGS="--enable-cuda --enable-cuvid --enable-nvenc"
+  EXTRA_FFMPEG_FLAGS="--enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-filter=scale_npp --enable-encoder=h264_nvenc"
+fi
+
+if [ $(uname) == "Linux" ]; then
+  echo "Checking for CUDA and installing."
+  # Check for CUDA and try to install.
+  # if ! dpkg-query -W cuda-10-0; then
+  #   curl -O http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+  #   sudo dpkg -i ./cuda-repo-ubuntu1804_10.0.130-1_amd64.deb
+  #   sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+  #   sudo apt-get update
+  #   sudo apt-get install cuda-10-0 cuda-runtime-10-0 -y
+  # fi
+  EXTRA_FFMPEG_FLAGS="$EXTRA_FFMPEG_FLAGS --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64"
+  # Enable persistence mode
+  # nvidia-smi -pm 1
 fi
 
 if [ ! -e "$HOME/ffmpeg/libavcodec/libavcodec.a" ]; then
@@ -61,7 +76,7 @@ if [ ! -e "$HOME/ffmpeg/libavcodec/libavcodec.a" ]; then
     --disable-muxers --disable-demuxers --disable-parsers --disable-protocols \
     --disable-encoders --disable-decoders --disable-filters --disable-bsfs \
     --disable-postproc --disable-lzma \
-    --enable-gnutls --enable-libx264 --enable-gpl \
+    --enable-gnutls --enable-libx264 --enable-gpl --enable-nonfree \
     --enable-protocol=https,rtmp,file \
     --enable-muxer=mpegts,hls,segment --enable-demuxer=flv,mpegts \
     --enable-bsf=h264_mp4toannexb,aac_adtstoasc,h264_metadata,h264_redundant_pps \

@@ -40,20 +40,23 @@ if [ ! -e "$HOME/ffmpeg/libavcodec/libavcodec.a" ]; then
   #   --enable-encoder=aac,libx264 \
   #   --enable-decoder=aac,h264 \
   #   --prefix="$HOME/compiled"
-  ./configure ${TARGET_OS:-} \
-    --prefix="$HOME/compiled" \
-    --disable-stripping \
-    --disable-static \
-    --enable-shared \
-    --enable-gpl \
-    --enable-nonfree \
-    --enable-libx264 \
-    --enable-cuda \
-    --enable-cuvid \
-    --enable-nvenc \
-    --enable-libnpp \
+ ./configure --disable-programs --disable-doc --disable-sdl2 --disable-iconv \
+	    --disable-muxers --disable-demuxers --disable-parsers --disable-protocols \
+	    --disable-encoders --disable-decoders --disable-filters --disable-bsfs \
+	    --disable-postproc --disable-lzma \
+	    --enable-gnutls --enable-libx264 --enable-gpl \
+	    --enable-protocol=https,rtmp,file \
+	    --enable-muxer=mpegts,hls,segment --enable-demuxer=flv,mpegts \
+	   --enable-bsf=h264_mp4toannexb,aac_adtstoasc,h264_metadata,h264_redundant_pps \
+	    --enable-parser=aac,aac_latm,h264 \
+     --enable-filter=abuffer,buffer,abuffersink,buffersink,afifo,fifo,aformat \
+    --enable-filter=aresample,asetnsamples,fps,scale,scale_npp \
+    --enable-encoder=aac,libx264,h264_nvenc \
+    --enable-decoder=aac,h264 \
+    --enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-nonfree \
+    --extra-cflags=-I/usr/local/cuda/include \
     --extra-ldflags=-L/usr/local/cuda/lib64 \
-    --extra-cflags=-I/usr/local/cuda/include
+    --prefix="$HOME/compiled"    
   make
   make install
 fi

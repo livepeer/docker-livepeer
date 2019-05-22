@@ -1,8 +1,10 @@
 # Docker file for building ffmpeg dependency
-FROM debian:stretch as builder
+FROM ubuntu:18.04 as builder
 
 ENV PKG_CONFIG_PATH /root/compiled/lib/pkgconfig
 WORKDIR /root
+
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt update \
     && apt install -y build-essential pkg-config autoconf gnutls-dev git curl
@@ -19,9 +21,12 @@ COPY install_ffmpeg_nvidia.sh install_ffmpeg_nvidia.sh
 RUN ./install_ffmpeg_nvidia.sh
 
 
-FROM debian:stretch-slim
+FROM ubuntu:18.04
 ENV PKG_CONFIG_PATH /root/compiled/lib/pkgconfig
+ENV CPATH /usr/local/cuda/include 
+ENV LIBRARY_PATH /usr/local/cuda/lib64
+
 WORKDIR /root
 COPY --from=builder /root/compiled /root/compiled/
-
+COPY --from=builder /usr/local/cuda /usr/local/cuda
 # Build Docker image: docker build -t ffmpeg-base .

@@ -50,7 +50,7 @@ if [ ! -e "$HOME/ffmpeg/libavcodec/libavcodec.a" ]; then
 	   --enable-bsf=h264_mp4toannexb,aac_adtstoasc,h264_metadata,h264_redundant_pps \
 	    --enable-parser=aac,aac_latm,h264 \
      --enable-filter=abuffer,buffer,abuffersink,buffersink,afifo,fifo,aformat \
-    --enable-filter=aresample,asetnsamples,fps,scale,scale_npp \
+    --enable-filter=aresample,asetnsamples,fps,scale,scale_cuda \
     --enable-encoder=aac,libx264,h264_nvenc \
     --enable-decoder=aac,h264 \
     --enable-cuda --enable-cuvid --enable-nvenc --enable-libnpp --enable-nonfree \

@@ -8,4 +8,5 @@ geth -networkid 54321 -rpc -ws \
       --nodiscover --maxpeers 0 \
       --targetgaslimit 0x8000000 \
       --cache=512 --verbosity 2 \
+      --rpcvhosts "*" \
       -mine

@@ -1,14 +1,13 @@
 mkdir /psrc && cd /psrc
 
-git clone -b pm https://github.com/livepeer/protocol.git
+git clone -b streamflow https://github.com/livepeer/protocol.git
 srcDir=/psrc
 cd $srcDir/protocol
 echo "Setting devenv specific protocol parameters"
 migrations="$srcDir/protocol/migrations/migrations.config.js"
 sed -i 's/roundLength:.*$/roundLength: 50,/' $migrations
-sed -i 's/unlockPeriod:.*$/unlockPeriod: 50,/' $migrations
-sed -i 's/numActiveTranscoders:.*$/numActiveTranscoders: 50,/' $migrations
-sed -i 's/numTranscoders:.*$/numTranscoders: 100,/' $migrations
+sed -i 's/unlockPeriod:.*$/unlockPeriod: 2,/' $migrations
+sed -i 's/numActiveTranscoders:.*$/numActiveTranscoders: 100,/' $migrations
 
 cat << EOF > $srcDir/protocol/truffle.js
 require("babel-register")
@@ -32,7 +31,7 @@ module.exports = {
     },
     compilers: {
         solc: {
-            version: "0.4.25",
+            version: "0.5.11",
             settings: {
                 optimizer: {
                     enabled: true,

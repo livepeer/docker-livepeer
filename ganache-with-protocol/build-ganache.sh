@@ -13,7 +13,7 @@ require("babel-polyfill")
 
 module.exports = {
     networks: {
-        development: {
+        lpTestNet: {
             host: "localhost",
             port: 8545,
             network_id: "54321", // Match any network id
@@ -48,23 +48,23 @@ module.exports = async cb => {
 EOF
 
 echo "npm install"
-npm install --unsafe-perm
+npm install 
 echo "Compiling contracts..."
 npm run compile
 echo "Done compiling, deploying..."
 
 echo "installing ganache"
-npm i ganache-cli -g --unsafe-perm
+npm i ganache-cli -g
 
 # Create truffle alias pointing to locally installed version
 alias truffle=./node_modules/.bin/truffle
-nohup bash -c "ganache-cli -k istanbul -l 0x7A1200 -h 0.0.0.0 -i 54321 --db $GANACHE_DB_PATH &" &&
+nohup bash -c "ganache-cli -k istanbul -l 0x7A1200 -h 0.0.0.0 -i 54321 -d --db $GANACHE_DB_PATH &" &&
 sleep 1
 
-migrateCmd="npm run migrate -- --network=development"
+migrateCmd="npm run migrate -- --network=lpTestNet"
 echo "Running $migrateCmd"
 eval $migrateCmd
-unpauseCmd="truffle exec --network development scripts/unpauseController.js"
+unpauseCmd="truffle exec --network lpTestNet scripts/unpauseController.js"
 echo "Running $unpauseCmd"
 eval $unpauseCmd
 controllerAddress=$(cd /protocol && truffle networks | awk '/54321/{f=1;next} /TokenPools/{f=0} f' | grep Controller | cut -d':' -f2 | tr -cd '[:alnum:]')
@@ -82,9 +82,12 @@ module.exports = async cb => {
 EOF
 
 echo "Need to wait till second round - we can't initialize transcoders in first one"
-waitBlocksCmd="truffle exec --network development scripts/skipBlocks.js"
+waitBlocksCmd="truffle exec --network lpTestNet scripts/skipBlocks.js"
 echo "Running $waitBlocksCmd"
 eval $waitBlocksCmd
 
 echo "Good to go"
+
+# shut down ganache-cli 
+pkill -9 node 
 sleep 1

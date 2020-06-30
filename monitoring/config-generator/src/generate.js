@@ -83,7 +83,7 @@ function generate () {
       },
       'pagerduty-service-key': {
         descibe: 'pagerduty service key for alertmanager to send alerts',
-        default: 'a6c500da75e84d788e799bb00f6b08ae',
+        default: '',
         type: 'string'
       }
     }).argv
@@ -565,7 +565,8 @@ function getAlertManagerConfig (params) {
   // Inhibition rules allow to mute a set of alerts given that another alert is firing
   let inhibit_rules = []
   
-  inhibit_rules.push({
+  inhibit_rules.push(
+    {
     source_match: {
       serverity: 'high'
     },
@@ -573,7 +574,26 @@ function getAlertManagerConfig (params) {
       severity: 'page'
     },
     equal: ['instance']
-  })
+  },
+  {
+    source_match: {
+      severity: 'critical'
+    },
+    target_match: {
+      severity: 'page'
+    },
+    equal: ['instance']
+  },
+  {
+    source_match: {
+      severity: 'critical'
+    },
+    target_match: {
+      severity: 'high'
+    },
+    equal: ['instance']
+  }
+  )
 
   // Add receiver configs
   if (params && params['pagerduty-service-key']) {

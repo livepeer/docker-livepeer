@@ -9,7 +9,7 @@ const yargs = require('yargs')
 const supervisord = require('./supervisord')
 const config = require('./config')
 
-function generate () {
+function generate() {
   const argv = yargs
     .usage(
       `
@@ -30,19 +30,16 @@ function generate () {
         choices: ['standalone', 'docker-compose', 'kubernetes']
       },
       nodes: {
-        describe:
-          "`--nodes`: a comma separated list of the livepeer nodes and their `cli` port we'd like to monitor, example: `--nodes=localhost:7935,localhost:7936`, this isn't required in the kubernetes deployments since discovery is done automatically using the `prometheus.io/scrape` labels.",
+        describe: "`--nodes`: a comma separated list of the livepeer nodes and their `cli` port we'd like to monitor, example: `--nodes=localhost:7935,localhost:7936`, this isn't required in the kubernetes deployments since discovery is done automatically using the `prometheus.io/scrape` labels.",
         type: 'string',
         default: 'localhost:7935'
       },
       'kube-namespaces': {
-        describe:
-          'comma separated list of namespaces to monitoring in the `kubernetes` deployment, this is needed for certain special deployments, it defaults to an empty array.',
+        describe: 'comma separated list of namespaces to monitoring in the `kubernetes` deployment, this is needed for certain special deployments, it defaults to an empty array.',
         type: 'string'
       },
       'kube-longterm': {
-        describe:
-          'enables longterm storage via PostgreSQL, note that the pg_prometheus, and the postgresql adapter are not included in this bundle',
+        describe: 'enables longterm storage via PostgreSQL, note that the pg_prometheus, and the postgresql adapter are not included in this bundle',
         type: 'boolean'
       },
       'prometheus-storagePath': {
@@ -51,8 +48,7 @@ function generate () {
         type: 'string'
       },
       'prometheus-prefix': {
-        describe:
-          'useful for running prometheus GUI as a subpath , example: /prometheus',
+        describe: 'useful for running prometheus GUI as a subpath , example: /prometheus',
         default: '/',
         type: 'string'
       },
@@ -76,8 +72,7 @@ function generate () {
         type: 'boolean'
       },
       'node-exporter-port': {
-        describe:
-          '[docker compose mode only] the port defined for node-exporter',
+        describe: '[docker compose mode only] the port defined for node-exporter',
         default: 9100,
         type: 'number'
       },
@@ -106,7 +101,7 @@ function generate () {
   )
 }
 
-function saveYaml (outputFolder, name, content) {
+function saveYaml(outputFolder, name, content) {
   // console.log(`===== saving ${name} into ${outputFolder}`)
   // console.log(content)
   fs.writeFileSync(path.join(outputFolder, name), YAML.stringify(content))
@@ -114,7 +109,7 @@ function saveYaml (outputFolder, name, content) {
 
 generate()
 
-function prometheusConfig (params) {
+function prometheusConfig(params) {
   let obj = {
     global: {
       scrape_interval: '5s',
@@ -137,112 +132,100 @@ function prometheusConfig (params) {
       case 'standalone':
         obj.scrape_configs.push({
           job_name: 'livepeer-nodes',
-          static_configs: [
-            {
-              targets: params.nodes.split(',')
-            }
-          ]
+          static_configs: [{
+            targets: params.nodes.split(',')
+          }]
         })
         break
       case 'docker-compose':
         obj.scrape_configs.push({
           job_name: 'livepeer-nodes',
-          static_configs: [
-            {
-              targets: params.nodes.split(',')
-            }
-          ]
+          static_configs: [{
+            targets: params.nodes.split(',')
+          }]
         })
 
         if (params.cadvisorPort) {
           obj.scrape_configs.push({
             job_name: 'cadvisor',
-            dns_sd_configs: [
-              {
-                names: ['tasks.cadvisor'],
-                type: 'A',
-                port: params.cadvisorPort
-              }
-            ]
+            dns_sd_configs: [{
+              names: ['tasks.cadvisor'],
+              type: 'A',
+              port: params.cadvisorPort
+            }]
           })
         }
 
         if (params.nodeExporterPort) {
           obj.scrape_configs.push({
             job_name: 'node-exporter',
-            dns_sd_configs: [
-              {
-                names: ['tasks.node-exporter'],
-                type: 'A',
-                port: params.nodeExporterPort
-              }
-            ]
+            dns_sd_configs: [{
+              names: ['tasks.node-exporter'],
+              type: 'A',
+              port: params.nodeExporterPort
+            }]
           })
         }
 
         break
       case 'kubernetes':
-        const namespaces = (params.kubeNamespaces) ? params.kubeNamespaces.split(',') : null
-        obj.scrape_configs = getPromKubeJobs(namespaces, params.prometheusKubeScrape)
+        const namespaces = params.kubeNamespaces ?
+          params.kubeNamespaces.split(',') :
+          null
+        obj.scrape_configs = getPromKubeJobs(
+          namespaces,
+          params.prometheusKubeScrape
+        )
         if (params.kubeLongterm) {
-          obj['remote_read'] = [
-            {
-              url: 'http://localhost:9201/read',
-              remote_timeout: '30s'
-            }
-          ]
+          obj['remote_read'] = [{
+            url: 'http://localhost:9201/read',
+            remote_timeout: '30s'
+          }]
 
-          obj['remote_write'] = [
-            {
-              url: 'http://localhost:9201/write',
-              remote_timeout: '30s'
-            }
-          ]
+          obj['remote_write'] = [{
+            url: 'http://localhost:9201/write',
+            remote_timeout: '30s'
+          }]
         }
 
         if (params.kubeCadvisor) {
           obj.scrape_configs.push({
             job_name: 'kubernetes-cadvisor',
             scheme: 'https',
-            kubernetes_sd_configs: [
-              {
-                api_server: null,
-                role: 'node',
-                namespaces: {
-                  names: namespaces
+            kubernetes_sd_configs: [{
+              api_server: null,
+              role: 'node',
+              namespaces: {
+                names: namespaces
+              },
+              bearer_token_file: '/var/run/secrets/kubernetes.io/serviceaccount/token',
+              tls_config: {
+                ca_file: '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
+                insecure_skip_verify: false
+              },
+              relabel_configs: [{
+                  separator: ';',
+                  regex: '__meta_kubernetes_node_label_(.+)',
+                  replacement: '$1',
+                  action: 'labelmap'
                 },
-                bearer_token_file:
-                  '/var/run/secrets/kubernetes.io/serviceaccount/token',
-                tls_config: {
-                  ca_file:
-                    '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
-                  insecure_skip_verify: false
+                {
+                  separator: ';',
+                  regex: '(.*)',
+                  target_label: '__address__',
+                  replacement: 'kubernetes.default.svc:443',
+                  action: 'replace'
                 },
-                relabel_configs: [
-                  {
-                    separator: ';',
-                    regex: '__meta_kubernetes_node_label_(.+)',
-                    replacement: '$1',
-                    action: 'labelmap'
-                  },
-                  {
-                    separator: ';',
-                    regex: '(.*)',
-                    target_label: '__address__',
-                    replacement: 'kubernetes.default.svc:443',
-                    action: 'replace'
-                  },
-                  {
-                    source_labels: '[__meta_kubernetes_node_name]',
-                    separator: ';',
-                    regex: '(.+)',
-                    target_label: '__metrics_path__',
-                    replacement: '/api/v1/nodes/${1}/proxy/metrics/cadvisor',
-                    action: 'replace'
-                  }
-                ]
-              }
-            ]
+                {
+                  source_labels: '[__meta_kubernetes_node_name]',
+                  separator: ';',
+                  regex: '(.+)',
+                  target_label: '__metrics_path__',
+                  replacement: '/api/v1/nodes/${1}/proxy/metrics/cadvisor',
+                  action: 'replace'
+                }
+              ]
+            }]
           })
         }
 
@@ -253,47 +236,41 @@ function prometheusConfig (params) {
         )
         break
     }
-  } else {
-  }
+  } else {}
 
   return obj
 }
 
-function getPromKubeJobs (namespaces, promKubeScrape) {
-  return [
-    {
+function getPromKubeJobs(namespaces, promKubeScrape) {
+  return [{
       job_name: 'kubernetes-apiservers',
       scrape_interval: '5s',
       scrape_timeout: '5s',
       metrics_path: '/metrics',
       scheme: 'https',
-      kubernetes_sd_configs: [
-        {
-          api_server: null,
-          role: 'endpoints',
-          namespaces: {
-            names: namespaces
-          }
+      kubernetes_sd_configs: [{
+        api_server: null,
+        role: 'endpoints',
+        namespaces: {
+          names: namespaces
         }
-      ],
+      }],
       bearer_token_file: '/var/run/secrets/kubernetes.io/serviceaccount/token',
       tls_config: {
         ca_file: '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
         insecure_skip_verify: false
       },
-      relabel_configs: [
-        {
-          source_labels: [
-            '__meta_kubernetes_namespace',
-            '__meta_kubernetes_service_name',
-            '__meta_kubernetes_endpoint_port_name'
-          ],
-          separator: ';',
-          regex: 'default;kubernetes;https',
-          replacement: '$1',
-          action: 'keep'
-        }
-      ]
+      relabel_configs: [{
+        source_labels: [
+          '__meta_kubernetes_namespace',
+          '__meta_kubernetes_service_name',
+          '__meta_kubernetes_endpoint_port_name'
+        ],
+        separator: ';',
+        regex: 'default;kubernetes;https',
+        replacement: '$1',
+        action: 'keep'
+      }]
     },
     {
       job_name: 'kubernetes-nodes',
@@ -301,22 +278,19 @@ function getPromKubeJobs (namespaces, promKubeScrape) {
       scrape_timeout: '5s',
       metrics_path: '/metrics',
       scheme: 'https',
-      kubernetes_sd_configs: [
-        {
-          api_server: null,
-          role: 'node',
-          namespaces: {
-            names: namespaces
-          }
+      kubernetes_sd_configs: [{
+        api_server: null,
+        role: 'node',
+        namespaces: {
+          names: namespaces
         }
-      ],
+      }],
       bearer_token_file: '/var/run/secrets/kubernetes.io/serviceaccount/token',
       tls_config: {
         ca_file: '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
         insecure_skip_verify: false
       },
-      relabel_configs: [
-        {
+      relabel_configs: [{
           separator: ';',
           regex: '__meta_kubernetes_node_label_(.+)',
           replacement: '$1',
@@ -345,18 +319,15 @@ function getPromKubeJobs (namespaces, promKubeScrape) {
       scrape_timeout: '5s',
       metrics_path: '/metrics',
       scheme: 'http',
-      kubernetes_sd_configs: [
-        {
-          api_server: null,
-          role: 'pod',
-          namespaces: {
-            names: namespaces
-          }
+      kubernetes_sd_configs: [{
+        api_server: null,
+        role: 'pod',
+        namespaces: {
+          names: namespaces
         }
-      ],
-      relabel_configs: [
-        {
-          "source_labels": [
+      }],
+      relabel_configs: [{
+          source_labels: [
             `__meta_kubernetes_pod_annotation_prometheus_io_${promKubeScrape}`
           ],
           separator: ';',
@@ -415,22 +386,19 @@ function getPromKubeJobs (namespaces, promKubeScrape) {
       scrape_timeout: '5s',
       metrics_path: '/metrics',
       scheme: 'https',
-      kubernetes_sd_configs: [
-        {
-          api_server: null,
-          role: 'node',
-          namespaces: {
-            names: namespaces
-          }
+      kubernetes_sd_configs: [{
+        api_server: null,
+        role: 'node',
+        namespaces: {
+          names: namespaces
         }
-      ],
+      }],
       bearer_token_file: '/var/run/secrets/kubernetes.io/serviceaccount/token',
       tls_config: {
         ca_file: '/var/run/secrets/kubernetes.io/serviceaccount/ca.crt',
         insecure_skip_verify: false
       },
-      relabel_configs: [
-        {
+      relabel_configs: [{
           separator: ';',
           regex: '__meta_kubernetes_node_label_(.+)',
           replacement: '$1',
@@ -459,18 +427,15 @@ function getPromKubeJobs (namespaces, promKubeScrape) {
       scrape_timeout: '5s',
       metrics_path: '/metrics',
       scheme: 'http',
-      kubernetes_sd_configs: [
-        {
-          api_server: null,
-          role: 'endpoints',
-          namespaces: {
-            names: namespaces
-          }
+      kubernetes_sd_configs: [{
+        api_server: null,
+        role: 'endpoints',
+        namespaces: {
+          names: namespaces
         }
-      ],
-      relabel_configs: [
-        {
-          "source_labels": [
+      }],
+      relabel_configs: [{
+          source_labels: [
             `__meta_kubernetes_service_annotation_prometheus_io_${promKubeScrape}`
           ],
           separator: ';',
@@ -544,7 +509,7 @@ function getPromKubeJobs (namespaces, promKubeScrape) {
   ]
 }
 
-function getAlertManagerConfig (params) {
+function getAlertManagerConfig(params) {
   // global configuration
   let global = {}
 
@@ -557,16 +522,15 @@ function getAlertManagerConfig (params) {
     receiver: 'pagerduty',
     // child routes
     // can be used to send different severity notifications to different receivers
-    routes: [],
+    routes: []
   }
 
   let receivers = []
 
   // Inhibition rules allow to mute a set of alerts given that another alert is firing
   let inhibit_rules = []
-  
-  inhibit_rules.push(
-    {
+
+  inhibit_rules.push({
     source_match: {
       serverity: 'high'
     },
@@ -574,8 +538,7 @@ function getAlertManagerConfig (params) {
       severity: 'page'
     },
     equal: ['instance']
-  },
-  {
+  }, {
     source_match: {
       severity: 'critical'
     },
@@ -583,8 +546,7 @@ function getAlertManagerConfig (params) {
       severity: 'page'
     },
     equal: ['instance']
-  },
-  {
+  }, {
     source_match: {
       severity: 'critical'
     },
@@ -592,8 +554,7 @@ function getAlertManagerConfig (params) {
       severity: 'high'
     },
     equal: ['instance']
-  }
-  )
+  })
 
   // Add receiver configs
   if (params && params['pagerduty-service-key']) {
@@ -604,7 +565,9 @@ function getAlertManagerConfig (params) {
         service_key: params['pagerduty-service-key']
       }]
     })
-  } else { return {} }
+  } else {
+    return {}
+  }
 
   return {
     global,
@@ -619,8 +582,7 @@ function getRules() {
 
   let broadcastingFunds = {
     name: 'broadcasting-funds',
-    rules: [
-      {
+    rules: [{
         alert: 'deposit-low',
         expr: 'livepeer_broadcaster_deposit < 200000000',
         for: '1m',
@@ -635,7 +597,7 @@ function getRules() {
       {
         alert: 'deposit-very-low',
         expr: 'livepeer_broadcaster_deposit < 50000000',
-        for : '1m',
+        for: '1m',
         annotations: {
           title: 'Broadcasting deposit below 0.05 ETH',
           description: 'The deposit is critically low and is now below 0.5 ETH, replenish your balance or your reserve will be used soon'
@@ -661,5 +623,7 @@ function getRules() {
 
   groups.push(broadcastingFunds)
 
-  return { groups }
+  return {
+    groups
+  }
 }

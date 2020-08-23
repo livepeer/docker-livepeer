@@ -1,0 +1,6 @@
+files:
+ - /var/log/livepeer.log
+destination:
+  host: {{HOST}}
+  port: {{PORT}}
+  protocol: tls

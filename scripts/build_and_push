@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+#
+# Helper script to build and push images in this repository.
+#
+# Usage:
+#   ./scripts/build_and_push PROJECT TAG
+#
+# Example:
+#   ./scripts/build_and_push vast-livepeer thedeeno/vast-livepeer:0.7.0
+#
+
+root=$(git rev-parse --show-toplevel)
+project=$1
+tag=$2
+
+if [[ -z "${projet}" ]]; then
+  echo "Please supply project"
+fi
+
+if [[ -z "${tag}" ]]; then
+  echo "Please supply tag"
+fi
+
+docker build "$root/$project" --tag $tag
+docker push $tag

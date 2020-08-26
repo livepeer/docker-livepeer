@@ -1,5 +1,6 @@
 files:
  - /var/log/livepeer.log
+ - /var/log/supervisord.log
 destination:
   host: {{HOST}}
   port: {{PORT}}

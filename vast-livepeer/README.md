@@ -13,7 +13,8 @@ livepeer base image to make it more compatible and convenient.
 # configure container
 export PAPERTRAIL_HOST="<HOST>"
 export PAPERTRAIL_PORT="<PORT>"
-export LIVEPEER_ARGS="-transcoder -orchAddr <ADDR> -orchSecret <SECRET> -nvidia=0"
+export GEO_RESOLVER=<URL>
+export LIVEPEER_ARGS="-transcoder -orchAddr "{{ORCH_ADDR}}:8935" -orchSecret <SECRET> -nvidia=0"
 
 # run custom start script in the image
 start
@@ -22,11 +23,11 @@ start
 2. Find an available vast instance:
 
 ```sh
-vast search offers 'rentable = true rented = false'
+vast search offers 'rentable=true rented=false cuda_vers=10.1'
 ```
 
 3. Launch new transcoders using this image by running:
 
 ```sh
-vast create instance <instance-id> --image thedeeno/vast-livepeer:0.7.0 --onstart ./my-start-command
+vast create instance <instance-id> --image thedeeno/vast-livepeer:0.11.0 --onstart ./my-start-command
 ```

@@ -11,12 +11,15 @@ FROM livepeer/go-livepeer:0.5.10-819784ad-linux
 # install remote syslog
 COPY --from=remote_syslog /root/remote_syslog/remote_syslog /usr/local/bin
 
-# install supervisor and nvenc
+# install packages
 RUN apt-get update \
   && apt-get install -y \
     supervisor \
     libnvidia-encode-450 \
     libnvidia-decode-450 \
+    curl \
+    jq \
+    vim \
   && rm -rf /var/lib/apt/lists/*
 
 # Add our support files and scripts

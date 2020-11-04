@@ -2,7 +2,7 @@ ARG ARCH="amd64"
 ARG OS="linux"
 
 FROM prom/prometheus:latest as t1
-FROM grafana/grafana:7.3.1 as c1
+FROM grafana/grafana:7.3.1-ubuntu as c1
 FROM prom/alertmanager:latest as a1
 
 FROM node:alpine as t2
@@ -76,13 +76,13 @@ RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
 # COPY --from=c1 /lib64 /lib64
 COPY --from=c1 /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu
 COPY --from=c1 /usr/share/grafana /usr/share/grafana
-COPY --from=c1 /etc/fonts /etc/fonts
+# COPY --from=c1 /etc/fonts /etc/fonts
 # COPY --from=c1 /usr/local/bin /usr/local/bin
 
 COPY --from=c1 $GF_PATHS_HOME/bin/grafana-cli $GF_PATHS_HOME/bin/grafana-cli
 COPY --from=c1 $GF_PATHS_HOME/public $GF_PATHS_HOME/public
-COPY --from=c1 $GF_PATHS_HOME/tools $GF_PATHS_HOME/tools
-COPY --from=c1 $GF_PATHS_HOME/tools/phantomjs/render.js $GF_PATHS_HOME/tools/phantomjs/render.js
+# COPY --from=c1 $GF_PATHS_HOME/tools $GF_PATHS_HOME/tools
+# COPY --from=c1 $GF_PATHS_HOME/tools/phantomjs/render.js $GF_PATHS_HOME/tools/phantomjs/render.js
 
 COPY ./grafana/grafanaDatasources.yml $GF_PATHS_PROVISIONING/datasources/datasources.yml
 COPY ./grafana/grafanaDashboards.yml $GF_PATHS_PROVISIONING/dashboards/dashboards.yml

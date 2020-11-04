@@ -922,7 +922,7 @@
             "uid": "discord"
           },
           {
-            "uid": "prom-alertmanger"
+            "uid": "prom-alertmanager"
           }
         ]
       },
@@ -1067,7 +1067,7 @@
             "uid": "discord"
           },
           {
-            "uid": "prom-alertmanger"
+            "uid": "prom-alertmanager"
           }
         ]
       },
@@ -1219,7 +1219,7 @@
             "uid": "discord"
           },
           {
-            "uid": "prom-alertmanger"
+            "uid": "prom-alertmanager"
           }
         ]
       },
@@ -1849,7 +1849,7 @@
             "uid": "discord"
           },
           {
-            "uid": "prom-alertmanger"
+            "uid": "prom-alertmanager"
           }
         ]
       },

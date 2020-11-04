@@ -118,7 +118,9 @@ function generate() {
   const promConfig = prometheusConfig(argv)
   console.log('prom JSON: ', JSON.stringify(promConfig))
   const supervisordConfig = supervisord.generate(argv)
-  saveYaml('/etc/prometheus', 'alertmanager.yml', getAlertManagerConfig(argv))
+  const alertmanagerConfig = getAlertManagerConfig(argv)
+  console.log('alertManager JSON', JSON.stringify(alertmanagerConfig))
+  saveYaml('/etc/prometheus', 'alertmanager.yml', alertmanagerConfig)
   saveYaml('/etc/prometheus', 'rules.yml', getRules(argv.alertGroups))
   saveYaml('/etc/prometheus', 'prometheus.yml', promConfig)
   if (argv['grafana-alerts']) {
@@ -756,7 +758,7 @@ function grafanaNotificationChannelsConfig(params) {
       org_name: 'Main Org.',
       is_default: true, 
       secure_settings: {
-        integrationKey: params['pagerduty-service-key']
+        integration_key: params['pagerduty-service-key']
       }
     })
   }

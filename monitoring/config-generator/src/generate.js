@@ -758,7 +758,7 @@ function grafanaNotificationChannelsConfig(params) {
       org_name: 'Main Org.',
       is_default: true, 
       secure_settings: {
-        integration_key: params['pagerduty-service-key']
+        integrationKey: params['pagerduty-service-key']
       }
     })
   }

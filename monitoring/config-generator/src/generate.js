@@ -64,6 +64,16 @@ function generate() {
         default: 'scrape',
         type: 'string'
       },
+      'alertmanager-prefix': {
+        describe: 'useful for running alertmanager GUI as a subpath , example: /alertmanager',
+        default: '/',
+        type: 'string'
+      },
+      'alertmanager-externalUrl': {
+        describe: 'external URL for the alertmanager service',
+        default: 'http://localhost:9090',
+        type: 'string'
+      },
       'cadvisor-port': {
         describe: '[docker compose mode only] the port defined for cadvisor',
         default: 8080,

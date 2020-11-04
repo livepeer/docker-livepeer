@@ -731,6 +731,7 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'discord',
       uid: 'discord',
       org_id: 1,
+      is_default: true, 
       settings: {
         content: '',
         url: params['discord-webhook']
@@ -740,9 +741,8 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'prometheus-alertmanager',
       uid: 'prom-alertmanager',
       org_name: 'Main Org.',
-      is_default: true, 
       settings: {
-        url: 'http://localhost:9093'
+        url: params['alertmanager-externalUrl'] || 'http://localhost:9093'
       }
     }]
   }

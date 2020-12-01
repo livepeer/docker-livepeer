@@ -36,6 +36,11 @@ function generate() {
         type: 'string',
         default: 'localhost:7935'
       },
+      'region': {
+        describe: 'the region code where this stack is running, example: FRA',
+        type: 'string',
+        default: 'not_set'
+      },
       'kube-namespaces': {
         describe: 'comma separated list of namespaces to monitoring in the `kubernetes` deployment, this is needed for certain special deployments, it defaults to an empty array.',
         type: 'string'
@@ -145,7 +150,10 @@ function prometheusConfig(params) {
     global: {
       scrape_interval: '5s',
       scrape_timeout: '5s',
-      evaluation_interval: '5s'
+      evaluation_interval: '5s',
+      external_labels: {
+        region: params.region
+      }     
     },
     scrape_configs: [],
     rule_files: ['rules.yml'],

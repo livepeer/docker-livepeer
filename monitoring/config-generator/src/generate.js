@@ -36,6 +36,11 @@ function generate() {
         type: 'string',
         default: 'localhost:7935'
       },
+      'region': {
+        describe: 'the region code where this stack is running, example: FRA',
+        type: 'string',
+        default: 'not_set'
+      },
       'kube-namespaces': {
         describe: 'comma separated list of namespaces to monitoring in the `kubernetes` deployment, this is needed for certain special deployments, it defaults to an empty array.',
         type: 'string'
@@ -62,6 +67,16 @@ function generate() {
       'prometheus-kube-scrape': {
         describe: 'annotation for scraping Kubernetes pods',
         default: 'scrape',
+        type: 'string'
+      },
+      'alertmanager-prefix': {
+        describe: 'useful for running alertmanager GUI as a subpath , example: /alertmanager',
+        default: '/',
+        type: 'string'
+      },
+      'alertmanager-externalUrl': {
+        describe: 'external URL for the alertmanager service',
+        default: 'http://localhost:9090',
         type: 'string'
       },
       'cadvisor-port': {
@@ -108,7 +123,9 @@ function generate() {
   const promConfig = prometheusConfig(argv)
   console.log('prom JSON: ', JSON.stringify(promConfig))
   const supervisordConfig = supervisord.generate(argv)
-  saveYaml('/etc/prometheus', 'alertmanager.yml', getAlertManagerConfig(argv))
+  const alertmanagerConfig = getAlertManagerConfig(argv)
+  console.log('alertManager JSON', JSON.stringify(alertmanagerConfig))
+  saveYaml('/etc/prometheus', 'alertmanager.yml', alertmanagerConfig)
   saveYaml('/etc/prometheus', 'rules.yml', getRules(argv.alertGroups))
   saveYaml('/etc/prometheus', 'prometheus.yml', promConfig)
   if (argv['grafana-alerts']) {
@@ -133,7 +150,10 @@ function prometheusConfig(params) {
     global: {
       scrape_interval: '5s',
       scrape_timeout: '5s',
-      evaluation_interval: '5s'
+      evaluation_interval: '5s',
+      external_labels: {
+        region: params.region
+      }     
     },
     scrape_configs: [],
     rule_files: ['rules.yml'],
@@ -714,6 +734,7 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'discord',
       uid: 'discord',
       org_id: 1,
+      is_default: true, 
       settings: {
         content: '',
         url: params['discord-webhook']
@@ -723,9 +744,8 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'prometheus-alertmanager',
       uid: 'prom-alertmanager',
       org_name: 'Main Org.',
-      is_default: true, 
       settings: {
-        url: 'http://localhost:9093'
+        url: params['alertmanager-externalUrl'] || 'http://localhost:9093'
       }
     }]
   }
@@ -739,9 +759,10 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'pagerduty',
       uid: 'pagerDuty',
       org_name: 'Main Org.',
-      is_default: true, 
+      // is_default: true, 
       secure_settings: {
-        integrationKey: params['pagerduty-service-key']
+        integrationKey: params['pagerduty-service-key'],
+        severity: 'critical'
       }
     })
   }

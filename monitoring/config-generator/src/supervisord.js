@@ -11,8 +11,9 @@ function generate (params, defaults = '/etc/supervisor.d/supervisord.conf') {
   // prometheus args
   if(params) {
     obj['program:prometheus'].command = `/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=${ params.prometheusStoragePath || '/data/prometheus'} --web.route-prefix=${params.prometheusPrefix || '/'} --web.external-url=${params.prometheusExternalUrl || 'http://localhost:9090/prometheus'} --web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles`
+    obj['program:alertmanager'].command = `/bin/alertmanager --config.file=/etc/prometheus/alertmanager.yml  --web.external-url=${params.alertmanagerExternalUrl} --web.route-prefix=${params.alertmanagerPrefix}`
   }
-
+  
   return ini.stringify(obj)
 }
 

@@ -59,6 +59,11 @@ function generate() {
         default: 'http://localhost:9090',
         type: 'string'
       },
+      'prometheus-external-labels': {
+        describe: 'external lavels for the promtheus, needed for federated view',
+        default: '',
+        type: 'string'
+      },
       'prometheus-kube-scrape': {
         describe: 'annotation for scraping Kubernetes pods',
         default: 'scrape',
@@ -138,7 +143,10 @@ function prometheusConfig(params) {
     global: {
       scrape_interval: '5s',
       scrape_timeout: '5s',
-      evaluation_interval: '5s'
+      evaluation_interval: '5s',
+      external_labels: [
+        params.prometheusExternalLabels
+      ]
     },
     scrape_configs: [],
     rule_files: ['rules.yml'],

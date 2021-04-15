@@ -145,7 +145,7 @@ function prometheusConfig(params) {
       scrape_timeout: '5s',
       evaluation_interval: '5s',
       external_labels: [
-        params.prometheusExternalLabels
+        JSON.stringify(params.prometheusExternalLabels)
       ]
     },
     scrape_configs: [],

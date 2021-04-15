@@ -144,9 +144,7 @@ function prometheusConfig(params) {
       scrape_interval: '5s',
       scrape_timeout: '5s',
       evaluation_interval: '5s',
-      external_labels: [{
-        cluster: params.prometheusExternalLabels
-      }]
+      external_labels: [`cluster: ${params.prometheusExternalLabels}`]
     },
     scrape_configs: [],
     rule_files: ['rules.yml'],

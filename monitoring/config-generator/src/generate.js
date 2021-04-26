@@ -102,6 +102,11 @@ function generate() {
         describe: 'enables grafana alerts to hook up to the prometheus alertmanager',
         type: 'boolean'
       },
+      'remote-write': {
+        describe: 'additional remote_write config in JSON format',
+        type: "string",
+        default: null
+      }
     }).argv
 
   if (argv.help || argv.version) {
@@ -216,16 +221,23 @@ function prometheusConfig(params) {
           namespaces,
           params.prometheusKubeScrape
         )
+        obj.remote_write = []
+
+        if (params.remoteWrite) {
+          const data = JSON.parse(params.remoteWrite);
+          obj.remote_write.push(data);
+        }
+
         if (params.kubeLongterm) {
           obj['remote_read'] = [{
             url: 'http://localhost:9201/read',
             remote_timeout: '30s'
           }]
 
-          obj['remote_write'] = [{
+          obj['remote_write'].push({
             url: 'http://localhost:9201/write',
             remote_timeout: '30s'
-          }]
+          })
         }
 
         if (params.kubeCadvisor) {

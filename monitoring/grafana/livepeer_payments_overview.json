@@ -558,6 +558,110 @@
         "x": 0,
         "y": 40
       },
+      "id": 44,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [],
+          "values": false
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "expr": "(sum(rate(livepeer_ticket_value_sent[5m])) * 1e9) / (sum(rate(livepeer_mil_pixels_processed[5m])) * 1000000)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Avg Price Per Pixel Sent Per Sec",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "id": 42,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "defaults": {
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [],
+          "values": false
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto"
+      },
+      "pluginVersion": "6.7.3",
+      "targets": [
+        {
+          "expr": "(sum(rate(livepeer_ticket_value_recv[5m])) * 1e9) / (sum(rate(livepeer_mil_pixels_processed[5m])) * 1000000)",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Avg Price Per Pixel Recv Per Sec",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 48
+      },
       "id": 12,
       "links": [],
       "options": {
@@ -611,7 +715,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 48
       },
       "id": 14,
       "links": [],
@@ -672,7 +776,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 48
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 2,
@@ -761,7 +865,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 48
+        "y": 56
       },
       "hiddenSeries": false,
       "id": 28,
@@ -850,7 +954,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 22,
@@ -939,7 +1043,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 57
+        "y": 65
       },
       "hiddenSeries": false,
       "id": 24,
@@ -1028,7 +1132,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 66
+        "y": 74
       },
       "hiddenSeries": false,
       "id": 26,
@@ -1106,7 +1210,7 @@
       }
     }
   ],
-  "refresh": "5s",
+  "refresh": "",
   "schemaVersion": 22,
   "style": "dark",
   "tags": [],

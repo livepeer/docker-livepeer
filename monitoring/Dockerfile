@@ -59,11 +59,11 @@ COPY --from=c1 $GF_PATHS_HOME/conf $GF_PATHS_HOME/conf
 
 RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
     mkdir -p "$GF_PATHS_PROVISIONING/datasources" \
-    "$GF_PATHS_PROVISIONING/dashboards" \
-    "$GF_PATHS_PROVISIONING/notifiers" \
-    "$GF_PATHS_LOGS" \
-    "$GF_PATHS_PLUGINS" \
-    "$GF_PATHS_DATA" && \
+             "$GF_PATHS_PROVISIONING/dashboards" \
+             "$GF_PATHS_PROVISIONING/notifiers" \
+             "$GF_PATHS_LOGS" \
+             "$GF_PATHS_PLUGINS" \
+             "$GF_PATHS_DATA" && \
     cp "$GF_PATHS_HOME/conf/sample.ini" "$GF_PATHS_CONFIG" && \
     cp "$GF_PATHS_HOME/conf/ldap.toml" /etc/grafana/ldap.toml && \
     chmod -R 777 "$GF_PATHS_DATA" "$GF_PATHS_HOME/.aws" "$GF_PATHS_LOGS" "$GF_PATHS_PLUGINS" "$GF_PATHS_PROVISIONING"
@@ -71,9 +71,19 @@ RUN mkdir -p "$GF_PATHS_HOME/.aws" && \
 COPY --from=c1 /usr/share/grafana /usr/share/grafana
 COPY --from=c1 $GF_PATHS_HOME/bin/grafana-cli $GF_PATHS_HOME/bin/grafana-cli
 COPY --from=c1 $GF_PATHS_HOME/public $GF_PATHS_HOME/public
+COPY ./grafana/datasources/datasources.yml $GF_PATHS_PROVISIONING/datasources/datasources.yml
+COPY ./grafana/dashboards/dashboards.yml $GF_PATHS_PROVISIONING/dashboards/dashboards.yml
+COPY ./grafana/dashboards/1.json $GF_PATHS_DATA/dashboards/1.json
+COPY ./grafana/dashboards/2.json $GF_PATHS_DATA/dashboards/2.json
+COPY ./grafana/dashboards/3.json $GF_PATHS_DATA/dashboards/3.json
+COPY ./grafana/dashboards/livepeer_overview.json $GF_PATHS_DATA/dashboards/livepeer_overview.json
+COPY ./grafana/dashboards/livepeer_payments_overview.json $GF_PATHS_DATA/dashboards/livepeer_payments_overview.json
+COPY ./grafana/dashboards/orchestrator_overview.json $GF_PATHS_DATA/dashboards/orchestrator_overview.json
+COPY ./grafana/dashboards/nvidia-gpu.json $GF_PATHS_DATA/dashboards/nvidia-gpu.json
+COPY ./grafana/dashboards/kubernetes/lpDebugger.json $GF_PATHS_DATA/dashboards/kubernetes/lpDebugger.json
+COPY ./grafana/dashboards/kubernetes/livepeer_overview.json $GF_PATHS_DATA/dashboards/kubernetes/k8s_livepeer_overview.json
+COPY ./grafana/dashboards/kubernetes/node_alerts.json $GF_PATHS_DATA/dashboards/kubernetes/ndoe_alerts.json
 
-COPY ./grafana/datasources $GF_PATHS_PROVISIONING/datasources
-COPY ./grafana/dashboards $GF_PATHS_DATA/dashboards
 
 EXPOSE 3000
 

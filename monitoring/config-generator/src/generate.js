@@ -686,7 +686,7 @@ function getRules(allowList) {
 
   groups.push(broadcastingFunds)
 
-  let httpRealTimeRatio = {
+  let httpRealTimeRatioLopri = {
     name: 'http-real-time-ratio',
     rules: [
       {
@@ -698,13 +698,13 @@ function getRules(allowList) {
           description: 'The % of HTTP push requests that complete in real-time or faster is lower than 99%'
         },
         labels: {
-          severity: 'page'
+          severity: 'low'
         }
       },
     ]
   }
 
-  groups.push(httpRealTimeRatio)
+  groups.push(httpRealTimeRatioLopri)
 
   let successRate = {
     name: 'success-rate',

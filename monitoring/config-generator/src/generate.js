@@ -88,6 +88,11 @@ function generate() {
         default: '',
         type: 'string'
       },
+      'pagerduty-lopri-service-key': {
+        describe: 'pagerduty service key for low urgency notifications',
+        default: '',
+        type: 'string'
+      },
       'alert-groups': {
         describe: 'comma-separated list of alert groups to enable',
         default: allGroups,
@@ -551,7 +556,9 @@ function getPromKubeJobs(namespaces, promKubeScrape) {
 
 function getAlertManagerConfig(params) {
   // global configuration
-  let global = {}
+  let global = {
+    pagerduty_url: config.PAGERDUTY_URL
+  }
 
   // The root route on which each incoming alert enters.
   let route = {
@@ -597,15 +604,25 @@ function getAlertManagerConfig(params) {
   })
 
   // Add receiver configs
-  if (params && params['pagerduty-service-key']) {
-    global['pagerduty_url'] = config.PAGERDUTY_URL
+  const pagerKey = params?.['pagerduty-service-key']
+  if (pagerKey) {
     receivers.push({
       name: 'pagerduty',
       pagerduty_configs: [{
-        service_key: params['pagerduty-service-key']
+        service_key: pagerKey
       }]
     })
-  } else {
+  }
+  const pagerLopriKey = params?.['pagerduty-lopri-service-key']
+  if (pagerLopriKey) {
+    receivers.push({
+      name: 'pagerduty_lopri',
+      pagerduty_configs: [{
+        service_key: pagerLopriKey
+      }]
+    })
+  }
+  if (!receivers.length) {
     return {}
   }
 
@@ -728,7 +745,7 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'prometheus-alertmanager',
       uid: 'prom-alertmanager',
       org_name: 'Main Org.',
-      is_default: true, 
+      is_default: true,
       settings: {
         url: 'http://localhost:9093'
       }
@@ -744,7 +761,7 @@ function grafanaNotificationChannelsConfig(params) {
       type: 'pagerduty',
       uid: 'pagerDuty',
       org_name: 'Main Org.',
-      is_default: true, 
+      is_default: true,
       secure_settings: {
         integrationKey: params['pagerduty-service-key']
       }

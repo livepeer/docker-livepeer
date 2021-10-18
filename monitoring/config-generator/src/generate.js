@@ -686,16 +686,18 @@ function getRules(allowList) {
 
   groups.push(broadcastingFunds)
 
+  const realTimeQuery = (range, threshold) =>
+      `(sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[${range}]))) / (sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_half[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_slow[${range}]))) < ${threshold}`
   let httpRealTimeRatioLopri = {
-    name: 'http-real-time-ratio',
+    name: 'http-real-time-ratio-lopri',
     rules: [
       {
-        alert: 'real-time',
-        expr: '(sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[1m]))) / (sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_half[1m])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_slow[1m]))) < .99',
+        alert: '[LOPRI]real-time-warning',
+        expr: realTimeQuery('1m', '.99'),
         for: '2m',
         annotations: {
-          title: '% real-time or faster HTTP push requests is low',
-          description: 'The % of HTTP push requests that complete in real-time or faster is lower than 99%'
+          title: '% real-time or faster HTTP push requests is slightly low',
+          description: 'The 1m average % of HTTP push requests that completed in real-time or faster is lower than 99%'
         },
         labels: {
           severity: 'low'
@@ -703,8 +705,26 @@ function getRules(allowList) {
       },
     ]
   }
+  let httpRealTimeRatio = {
+    name: 'http-real-time-ratio',
+    rules: [
+      {
+        alert: 'real-time-critical',
+        expr: realTimeQuery('10m', '.90'),
+        for: '2m',
+        annotations: {
+          title: '% real-time or faster HTTP push requests is critically low',
+          description: 'The 10m average % of HTTP push requests that completed in real-time or faster is lower than 90%'
+        },
+        labels: {
+          severity: 'critical'
+        }
+      },
+    ]
+  }
 
   groups.push(httpRealTimeRatioLopri)
+  groups.push(httpRealTimeRatio)
 
   let successRate = {
     name: 'success-rate',

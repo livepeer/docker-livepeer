@@ -621,6 +621,12 @@ function getAlertManagerConfig(params) {
         service_key: pagerLopriKey
       }]
     })
+    route.routes.push({
+      receiver: 'pagerduty_lopri',
+      matchers: [
+        'severity = low'
+      ]
+    })
   }
   if (!receivers.length) {
     return {}

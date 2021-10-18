@@ -572,7 +572,7 @@ function getAlertManagerConfig(params) {
 
   inhibit_rules.push({
     source_match: {
-      serverity: 'high'
+      severity: 'high'
     },
     target_match: {
       severity: 'page'

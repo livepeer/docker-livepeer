@@ -686,8 +686,21 @@ function getRules(allowList) {
 
   groups.push(broadcastingFunds)
 
-  const realTimeQuery = (range, threshold) =>
-      `(sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[${range}]))) / (sum(increase(livepeer_http_client_segment_transcoded_realtime_3x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_2x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_1x[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_half[${range}])) + sum(increase(livepeer_http_client_segment_transcoded_realtime_slow[${range}]))) < ${threshold}`
+  const realTimeTranscodesCount = (bucket, range) =>
+      `sum(increase(livepeer_http_client_segment_transcoded_realtime_${bucket}[${range}]))`
+  const realTimeQuery = (range, threshold) => `\
+(
+    ${realTimeTranscodesCount('3x', range)} +
+    ${realTimeTranscodesCount('2x', range)} +
+    ${realTimeTranscodesCount('1x', range)}
+) / (
+    ${realTimeTranscodesCount('3x', range)} +
+    ${realTimeTranscodesCount('2x', range)} +
+    ${realTimeTranscodesCount('1x', range)} +
+    ${realTimeTranscodesCount('half', range)} +
+    ${realTimeTranscodesCount('slow', range)}
+) < ${threshold}`
+
   let httpRealTimeRatioLopri = {
     name: 'http-real-time-ratio-lopri',
     rules: [

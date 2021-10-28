@@ -36,14 +36,14 @@ jobs:
           TAGS: ${{ steps.tags.outputs.tags }}
         run: |
           cd curl-jq
-          docker build $(printf ' -t livepeer/curl-jq:%s' $TAGS) .
+          docker build $(printf ' -t livepeerci/curl-jq:%s' $TAGS) .
 
       - name: docker push
         env:
           TAGS: ${{ steps.tags.outputs.tags }}
         run: |
           for TAG in $TAGS; do
-            docker push livepeer/curl-jq:$TAG
+            docker push livepeerci/curl-jq:$TAG
           done
 
       - name: notify livepeer-infra

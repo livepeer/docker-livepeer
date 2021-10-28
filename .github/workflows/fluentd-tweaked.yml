@@ -36,14 +36,14 @@ jobs:
           TAGS: ${{ steps.tags.outputs.tags }}
         run: |
           cd fluentd-tweaked
-          docker build $(printf ' -t livepeer/fluentd-tweaked:%s' $TAGS) .
+          docker build $(printf ' -t livepeerci/fluentd-tweaked:%s' $TAGS) .
 
       - name: docker push
         env:
           TAGS: ${{ steps.tags.outputs.tags }}
         run: |
           for TAG in $TAGS; do
-            docker push livepeer/fluentd-tweaked:$TAG
+            docker push livepeerci/fluentd-tweaked:$TAG
           done
 
       - name: notify livepeer-infra

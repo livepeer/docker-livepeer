@@ -21,7 +21,7 @@ jobs:
         id: is-branch
         run: |
           BRANCH="${GITHUB_REF#refs/heads/}"
-          IS_MASTER=$([[ "${GITHUB_REF#refs/heads/}" = 'master' ]] && echo 'true' || echo 'false')
+          IS_MASTER=$([[ "$BRANCH" = 'master' ]] && echo 'true' || echo 'false')
           echo ::set-output name=branch::$BRANCH
           echo ::set-output name=master::$IS_MASTER
 

@@ -23,7 +23,7 @@ eval $unpauseCmd
 controllerAddress=$(npx hardhat print-contract-address --contract Controller --network gethDev)
 echo "Controller address: $controllerAddress"
 echo $controllerAddress > $gethRoot/controllerAddress
-migrateArbitrumLPTMockCmd="npx hardhat deploy --tags ARBITRUM_LPT_MOCK --network gethDev"
+migrateArbitrumLPTMockCmd="npx hardhat deploy --tags ARBITRUM_LPT_DUMMIES --network gethDev"
 echo "Running $migrateArbitrumLPTMockCmd"
 eval $migrateArbitrumLPTMockCmd
 cd $OPWD

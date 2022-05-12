@@ -14,16 +14,16 @@ echo "yarn install"
 yarn install
 echo "npx hardhat typechain"
 npx hardhat typechain
-migrateCmd="yarn deploy --network geth"
+migrateCmd="yarn deploy --network gethDev"
 echo "Running $migrateCmd"
 eval $migrateCmd
-unpauseCmd="npx hardhat unpause --network geth"
+unpauseCmd="npx hardhat unpause --network gethDev"
 echo "Running $unpauseCmd"
 eval $unpauseCmd
-controllerAddress=$(npx hardhat print-contract-address --contract Controller --network geth)
+controllerAddress=$(npx hardhat print-contract-address --contract Controller --network gethDev)
 echo "Controller address: $controllerAddress"
 echo $controllerAddress > $gethRoot/controllerAddress
-migrateArbitrumLPTMockCmd="npx hardhat deploy --tags ARBITRUM_LPT_MOCK --network geth"
+migrateArbitrumLPTMockCmd="npx hardhat deploy --tags ARBITRUM_LPT_MOCK --network gethDev"
 echo "Running $migrateArbitrumLPTMockCmd"
 eval $migrateArbitrumLPTMockCmd
 cd $OPWD

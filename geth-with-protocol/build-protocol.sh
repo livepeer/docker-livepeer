@@ -1,10 +1,10 @@
 mkdir /psrc && cd /psrc
 
-# to be changed after rb/hardhat-geth-config is merged with the confluence branch
-git clone -b rb/hardhat-geth-config https://github.com/livepeer/protocol.git
+git clone -b confluence https://github.com/livepeer/protocol.git
 srcDir=/psrc
 cd $srcDir/protocol
 
+git checkout 3c01f3a3e8c494ea2f89b77d03eb0a68a4e15518
 nohup bash -c "/start.sh &" &&
 sleep 1
 

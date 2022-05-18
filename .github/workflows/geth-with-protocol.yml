@@ -1,0 +1,30 @@
+name: geth-with-protocol
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  docker:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: docker login
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          # docker login
+          docker version
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+
+      - name: Check out code
+        uses: actions/checkout@v1
+
+      - name: docker build
+        run: |
+          cd geth-with-protocol
+          docker build livepeer/geth-with-livepeer-protocol:confluence .
+
+      - name: docker push
+        run: |
+          docker push livepeer/geth-with-livepeer-protocol:confluence

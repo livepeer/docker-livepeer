@@ -20,7 +20,7 @@ jobs:
       - name: docker build
         run: |
           cd geth-with-protocol
-          docker build livepeer/geth-with-livepeer-protocol:confluence .
+          docker build -t livepeer/geth-with-livepeer-protocol:confluence .
 
       - name: docker push
         run: |

@@ -6,10 +6,14 @@ cd $srcDir/protocol
 
 git checkout 3c01f3a3e8c494ea2f89b77d03eb0a68a4e15518
 nohup bash -c "/start.sh &" &&
-sleep 1
+sleep 4
 
 OPWD=$PWD
 cd $srcDir/protocol
+echo "yarn config set unsafe-perm true"
+yarn config set unsafe-perm true
+echo "npm config set unsafe-perm=true"
+npm config set unsafe-perm=true
 echo "yarn install"
 yarn install
 echo "npx hardhat typechain"

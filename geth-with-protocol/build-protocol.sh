@@ -12,6 +12,8 @@ OPWD=$PWD
 cd $srcDir/protocol
 echo "yarn config set unsafe-perm true"
 yarn config set unsafe-perm true
+echo "npm config set unsafe-perm=true"
+npm config set unsafe-perm=true
 echo "yarn install"
 yarn install
 echo "npx hardhat typechain"

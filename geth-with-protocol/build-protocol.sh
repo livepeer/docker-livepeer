@@ -4,7 +4,7 @@ git clone -b confluence https://github.com/livepeer/protocol.git
 srcDir=/psrc
 cd $srcDir/protocol
 
-git checkout 3c01f3a3e8c494ea2f89b77d03eb0a68a4e15518
+git checkout e8b6243c48d9db33852310d2aefedd5b1c77b8b6
 nohup bash -c "/start.sh &" &&
 sleep 4
 
